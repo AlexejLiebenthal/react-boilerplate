@@ -23,16 +23,19 @@ const IndexLazyImport = createFileRoute('/')()
 // Create/Update Routes
 
 const AboutLazyRoute = AboutLazyImport.update({
+  id: '/about',
   path: '/about',
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/about.lazy').then((d) => d.Route))
 
 const ApiRoute = ApiImport.update({
+  id: '/api',
   path: '/api',
   getParentRoute: () => rootRoute,
 } as any)
 
 const IndexLazyRoute = IndexLazyImport.update({
+  id: '/',
   path: '/',
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route))
@@ -67,10 +70,72 @@ declare module '@tanstack/react-router' {
 
 // Create and export the route tree
 
-export const routeTree = rootRoute.addChildren({
-  IndexLazyRoute,
-  ApiRoute,
-  AboutLazyRoute,
-})
+export interface FileRoutesByFullPath {
+  '/': typeof IndexLazyRoute
+  '/api': typeof ApiRoute
+  '/about': typeof AboutLazyRoute
+}
+
+export interface FileRoutesByTo {
+  '/': typeof IndexLazyRoute
+  '/api': typeof ApiRoute
+  '/about': typeof AboutLazyRoute
+}
+
+export interface FileRoutesById {
+  __root__: typeof rootRoute
+  '/': typeof IndexLazyRoute
+  '/api': typeof ApiRoute
+  '/about': typeof AboutLazyRoute
+}
+
+export interface FileRouteTypes {
+  fileRoutesByFullPath: FileRoutesByFullPath
+  fullPaths: '/' | '/api' | '/about'
+  fileRoutesByTo: FileRoutesByTo
+  to: '/' | '/api' | '/about'
+  id: '__root__' | '/' | '/api' | '/about'
+  fileRoutesById: FileRoutesById
+}
+
+export interface RootRouteChildren {
+  IndexLazyRoute: typeof IndexLazyRoute
+  ApiRoute: typeof ApiRoute
+  AboutLazyRoute: typeof AboutLazyRoute
+}
+
+const rootRouteChildren: RootRouteChildren = {
+  IndexLazyRoute: IndexLazyRoute,
+  ApiRoute: ApiRoute,
+  AboutLazyRoute: AboutLazyRoute,
+}
+
+export const routeTree = rootRoute
+  ._addFileChildren(rootRouteChildren)
+  ._addFileTypes<FileRouteTypes>()
 
 /* prettier-ignore-end */
+
+/* ROUTE_MANIFEST_START
+{
+  "routes": {
+    "__root__": {
+      "filePath": "__root.tsx",
+      "children": [
+        "/",
+        "/api",
+        "/about"
+      ]
+    },
+    "/": {
+      "filePath": "index.lazy.tsx"
+    },
+    "/api": {
+      "filePath": "api.tsx"
+    },
+    "/about": {
+      "filePath": "about.lazy.tsx"
+    }
+  }
+}
+ROUTE_MANIFEST_END */

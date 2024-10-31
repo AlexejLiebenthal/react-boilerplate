@@ -1,13 +1,4 @@
 {
-  "extends": ["@tsconfig/strictest/tsconfig", "@tsconfig/vite-react/tsconfig"],
-  "compilerOptions": {
-    "exactOptionalPropertyTypes": false,
-
-    "types": ["vite/client", "vitest/globals"],
-
-    "baseUrl": "./",
-    "paths": { "#/*": ["public/*"], "@/*": ["src/*"] }
-  },
-  "include": ["src", "tests", "functions"],
-  "references": [{ "path": "./tsconfig.node.json" }]
+  "files": [],
+  "references": [{ "path": "./tsconfig.app.json" }, { "path": "./tsconfig.node.json" }]
 }

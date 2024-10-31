@@ -1,14 +1,15 @@
 const { resolve } = require("node:path");
 
-const project = [resolve(__dirname, "tsconfig.json"), resolve(__dirname, "tsconfig.node.json")];
+const project = [
+  resolve(__dirname, "tsconfig.json"),
+  resolve(__dirname, "tsconfig.app.json"),
+  resolve(__dirname, "tsconfig.node.json"),
+];
 
 /** @type {import('eslint').Linter.Config} */
 module.exports = {
   root: true,
   extends: [
-    "airbnb",
-    "airbnb/hooks",
-    "airbnb-typescript",
     "eslint:recommended",
     "plugin:@typescript-eslint/strict-type-checked",
     "plugin:@typescript-eslint/stylistic-type-checked",
@@ -25,7 +26,7 @@ module.exports = {
     "plugin:tailwindcss/recommended",
     "plugin:prettier/recommended",
   ],
-  ignorePatterns: ["dist", ".eslintrc.cjs", "*.gen.ts", "cloudflare.d.ts"],
+  ignorePatterns: ["dist", ".eslintrc.cjs", "*.gen.ts"],
   parser: "@typescript-eslint/parser",
   parserOptions: {
     ecmaVersion: "latest",
@@ -49,6 +50,7 @@ module.exports = {
     },
 
     react: {
+      version: "detect",
       buttonComponents: ["Button"],
     },
   },
@@ -56,13 +58,6 @@ module.exports = {
   rules: {
     // Default rule from Vite to help with Fast HMR
     "react-refresh/only-export-components": ["warn", { allowConstantExport: true }],
-
-    // We will deactivate this rule which was activated by airbnb recommended rules (https://github.com/airbnb/javascript/blob/c25bce83be4db06e6a221d79686c485cd2ed5d5d/packages/eslint-config-airbnb-base/rules/style.js#L340..L358):
-    // AirBnB's rule for `for..of` is too strict. We want to allow `for..of` loops. Which also aligns with unicorn's rule.
-    // The `for..in` rule is also already disabled in the eslint typescript recommended rule https://typescript-eslint.io/rules/no-for-in-array/
-    // The `labels` rule is not necessary because it is part of the `eslint:recommended` rule set. (https://eslint.org/docs/latest/rules/no-labels)
-    // The `with statement` rule is not necessary because it is part of the `eslint:recommended` rule set. (https://eslint.org/docs/latest/rules/no-with)
-    "no-restricted-syntax": "off",
 
     // Adding a stylistic rule for type imports.
     // Unfortunately, this is somehow not part of `plugin:@typescript-eslint/stylistic-type-checked`.
@@ -85,9 +80,11 @@ module.exports = {
       },
     ],
 
-    // With TypeScript, this rules can be safely deactivated.
-    "react/require-default-props": "off",
-    "react/prop-types": "off",
+    // We want to enforce a consisten function type for function components
+    "react/function-component-definition": "error",
+
+    // We want to enforce self-closing components
+    "react/self-closing-comp": "error",
 
     // We want to require destructuring and symmetric naming of `useState` hook value and setter variables
     "react/hook-use-state": "error",
@@ -95,11 +92,23 @@ module.exports = {
     // We want to disallow problematic leaked values from being rendered
     "react/jsx-no-leaked-render": ["error", { validStrategies: ["coerce"] }],
 
-    // We want to allow the use of fragments in JSX in an expression. AirBnB's rule is too strict and disallows it.
-    "react/jsx-no-useless-fragment": ["warn", { allowExpressions: true }],
+    // We want to be explicit about the props we pass to components
+    "react/jsx-props-no-spreading": "error",
 
-    // We like to allow `null` in our (react) codebase. But the reasoning behind this rule is completely valid.
-    "unicorn/no-null": "off",
+    // We want to disallow to define a prop and not use it
+    "react/no-unused-prop-types": "error",
+
+    // We want to disallow the use of `dangerouslySetInnerHTML`
+    "react/no-danger": "error",
+
+    // We want to enforce proper props naming
+    "react/boolean-prop-naming": "warn",
+
+    // We want to enforce proper handler naming
+    "react/jsx-handler-names": "warn",
+
+    // We like to allow `null in some cases as return values in our react codebase - though the reasoning not to use `null` is completely valid: see https://github.com/sindresorhus/meta/discussions/7
+    "unicorn/no-null": "warn",
 
     // Configure allowed abbreviations
     "unicorn/prevent-abbreviations": [
@@ -126,6 +135,7 @@ module.exports = {
     "simple-import-sort/imports": "error",
     "simple-import-sort/exports": "error",
 
+    // Setup of `import` plugin for default exports
     "import/prefer-default-export": "off",
     "import/no-default-export": "warn",
   },
@@ -151,7 +161,7 @@ module.exports = {
         // We want to enforce the use of `userEvent` over `fireEvent` in testing-library. See also: https://testing-library.com/docs/user-event/intro/
         "testing-library/prefer-user-event": "error",
 
-        // We want to use unbound-method from jest in favor of the one from typescript-eslint in tests.
+        // We want to use unbound-method implementation from jest eslint rules instead of the one from typescript-eslint in tests.
         "@typescript-eslint/unbound-method": "off",
         "jest/unbound-method": "error",
 
@@ -176,6 +186,7 @@ module.exports = {
     {
       files: ["src/components/ui/**/*.{ts,tsx}"],
       rules: {
+        // This configuation is used to match shadcn style
         "react/jsx-props-no-spreading": "off",
         "react-refresh/only-export-components": "off",
       },
