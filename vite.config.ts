@@ -15,11 +15,6 @@ export default defineConfig({
     }),
     TanStackRouterVite(),
   ],
-  resolve: {
-    alias: {
-      "#/": "/",
-    },
-  },
   test: {
     globals: true,
     environment: "happy-dom",

@@ -1,5 +1,6 @@
-import { useAtomValue } from "jotai";
 import { useCallback, useEffect } from "react";
+
+import { useAtomValue } from "jotai";
 
 import { themeAtom } from "@/atoms/theme-atom";
 
@@ -17,7 +18,7 @@ export const useTheme = () => {
 
   useEffect(() => {
     if (theme === "system") {
-      const media = window.matchMedia("(prefers-color-scheme: dark)");
+      const media = globalThis.matchMedia("(prefers-color-scheme: dark)");
       handleThemeChange(media);
       media.addEventListener("change", handleThemeChange);
       return () => {
@@ -26,6 +27,8 @@ export const useTheme = () => {
     }
 
     handleThemeChange();
-    return () => {};
+    return () => {
+      // noop
+    };
   }, [handleThemeChange, theme]);
 };

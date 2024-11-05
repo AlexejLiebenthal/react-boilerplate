@@ -1,7 +1,8 @@
+import { lazy, Suspense } from "react";
+
 import { type QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { createRootRouteWithContext, Link, Outlet } from "@tanstack/react-router";
-import { lazy, Suspense } from "react";
 
 import { Loader } from "@/components/loader";
 import { ModeToggle } from "@/components/mode-toggle";
@@ -9,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { useTheme } from "@/hooks/use-theme";
 
 const TanStackRouterDevtools = import.meta.env.PROD
-  ? () => null // Render nothing in production
+  ? () => <></> // Render nothing in production
   : lazy(() =>
       // Lazy load in development
       import("@tanstack/router-devtools").then((resolve) => ({

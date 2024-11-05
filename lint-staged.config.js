@@ -10,4 +10,5 @@ export default {
     const match = micromatch.not(files, ["**/*.gen.ts", "**/*.d.ts"]);
     return `pnpm lint:fix ${match.join(" ")}`;
   },
+  "*": "pnpm format",
 };

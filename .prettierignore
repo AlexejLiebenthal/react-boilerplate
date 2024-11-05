@@ -1,0 +1,4 @@
+dist
+**/*.gen.ts
+
+pnpm-lock.yaml
